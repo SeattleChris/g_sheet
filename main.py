@@ -36,6 +36,15 @@ def main():
             pickle.dump(creds, token)
 
     service = build('sheets', 'v4', credentials=creds)
+    # Sample addition
+    spreadsheet = {
+        'properties': {
+        'title': title
+        }
+    }
+    spreadsheet = service.spreadsheets().create(body=spreadsheet,
+                                                fields='spreadsheetId').execute()
+    print('Spreadsheet ID: {0}'.format(spreadsheet.get('spreadsheetId')))
 
     # Call the Sheets API
     sheet = service.spreadsheets()
