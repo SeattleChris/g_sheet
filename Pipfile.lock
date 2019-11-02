@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b8e15709307175553ad229c86672a8b2ed3519ddf369040743036a82e3e63323"
+            "sha256": "57a8f47c12190095f92860143dddcbbcddd7c97da7e8b06bcbd5cf958204da38"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "apiclient": {
+            "hashes": [
+                "sha256:2569c998191cd1a042beffa3cf7c1119277237b4ba1fa021d20c81fa98fa95e9"
+            ],
+            "index": "pypi",
+            "version": "==1.0.4"
+        },
         "cachetools": {
             "hashes": [
                 "sha256:428266a1c0d36dc5aca63a2d7c5942e88c2c898d72139fca0e97fdd2380517ae",
@@ -73,6 +80,7 @@
                 "sha256:34537dcdd5e0f2386d29e0e2c6d4a1703a3b982d34c198a5102e6e5d6194b107",
                 "sha256:409fa5509298f739b34d5a652df762cb0042507dc93f6633e306b11289d6249d"
             ],
+            "index": "pypi",
             "version": "==0.14.0"
         },
         "idna": {
@@ -81,6 +89,14 @@
                 "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"
             ],
             "version": "==2.8"
+        },
+        "oauth2client": {
+            "hashes": [
+                "sha256:b8a81cc5d60e2d364f0b1b98f958dbd472887acaf1a5b05e21c28c31a2d6d3ac",
+                "sha256:d486741e451287f69568a4d26d70d9acd73a2bbfa275746c535b4209891cccc6"
+            ],
+            "index": "pypi",
+            "version": "==4.1.3"
         },
         "oauthlib": {
             "hashes": [
