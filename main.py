@@ -1,4 +1,5 @@
 
+import os.path      # Used by both quickstart and Common code method.
 from googleapiclient.discovery import build   # Google API Common Code Walk Through AND quickstart
 from httplib2 import Http                     # Google API Common Code Walk Through
 from oauth2client import file, client, tools  # Google API Common Code Walk Through
@@ -33,7 +34,6 @@ def get_original_creds():
     from google_auth_oauthlib.flow import InstalledAppFlow
     from google.auth.transport.requests import Request
     import pickle
-    import os.path
 
     creds = None
     # If modifying these scopes, delete the file token.pickle.
@@ -58,13 +58,16 @@ def get_original_creds():
     return service
 
 
-def get_common_creds():
+def get_creds():
     """ This approach based on Google API common code walkthrough """
-    store = file.Storage('storage.json')
+    STORAGE = 'env/storage.json'
+    if not os.path.exists(STORAGE):
+        raise EnvironmentError('Missing file')
+    store = file.Storage(STORAGE)
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET, SCOPES)
-        creds = tools.run(flow, store)
+        creds = tools.run_flow(flow, store)
     service = build('sheets', 'v4', http=creds.authorize(Http()))
     return service
 
@@ -74,7 +77,7 @@ def main():
     Prints values from a sample spreadsheet.
     """
     # service = get_original_creds()
-    service = get_common_creds()
+    service = get_creds()
     test_string = 'We got a service!' if service else 'Creds and service did not work.'
     print(test_string)
     # Sample addition

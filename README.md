@@ -9,15 +9,13 @@
 
 ## Getting Started
 
-You need a credentials.json file with the authorization from google. It can be generated from the [instructions website](https://developers.google.com/sheets/api/quickstart/python). 
+You need a credentials.json file with the authorization from google. It can be generated from the [instructions website](https://developers.google.com/sheets/api/quickstart/python).
 
 Install Google Client Library. If not using pipenv, the following should start with `pip` instead of `pipenv`.
 
 ```bash
 pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
-
-
 
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
 
