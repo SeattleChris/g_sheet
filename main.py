@@ -135,7 +135,6 @@ def modify_sheet(service, id):
 
 def user_menu():
     """ Capturing the user input to do the desired actions. """
-    # https://docs.google.com/spreadsheets/d/{id}/edit#gid=0
     boring = str(input('Just load & print sample worksheet? (y/n) ')).lower()
     if boring == 'y':
         return ('boring', SAMPLE_SPREADSHEET_ID)
@@ -147,10 +146,14 @@ def user_menu():
         for line in reader:
             counter += 1
             key, val = line.split(',', 1)
+            val = val.strip()
             files.append([key, val])
             print(f" {counter}. {key} ")
-
-    choice = int(input('Which file do you want to modify (or 0 for create)? '))
+    try:
+        choice = int(input('Which file do you want to modify (or 0 for create)? '))
+    except ValueError:
+        print("Not a number, so exiting")
+        return ('exit', 0)
     if choice == 0:
         title = str(input('What title do you want for the new worksheet? ')).lower()
         return ('create', title)
@@ -158,6 +161,14 @@ def user_menu():
         choice -= 1
         id = files[choice][1]
         return ('modify', id)
+
+
+def display_sheet(id):
+    """ Can we give a link to view the worksheet? """
+    url = f"https://docs.google.com/spreadsheets/d/{id}/edit#gid=0"
+    print('=================== Use the following link =====================')
+    print(url)
+    return url
 
 
 def main():
@@ -178,8 +189,10 @@ def main():
     elif method == 'modify':
         modify_sheet(service, id)
     else:
-        print('Unknown condition')
-    return id
+        print('Exit condition, or Unknown condition. Exit now')
+        return
+    result = display_sheet(id)
+    return result
 
 
 if __name__ == '__main__':
