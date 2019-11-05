@@ -4,7 +4,7 @@ from googleapiclient.discovery import build   # Google API Common Code Walk Thro
 from httplib2 import Http                     # Google API Common Code Walk Through
 from oauth2client import file, client, tools  # Google API Common Code Walk Through
 # from google_auth_oauthlib.flow import Flow
-
+# import google-api-python-client
 # oauth2client import client  -> google_auth_oauthlib import flow
 # client.flow_from_clientsecrets -> flow.from_client_secrets_file
 
@@ -39,9 +39,8 @@ def sample_read(service, id):
             print('%s, %s' % (row[0], row[4]))
 
 
-def sheet_create(service):
-    """ This is a sample snippet from the guide """
-    title = 'test'
+def sheet_create(service, title):
+    """ This is based on a sample snippet from the guide """
     spreadsheet = {'properties': {'title': title}}
     spreadsheet = service.spreadsheets().create(body=spreadsheet,
                                                 fields='spreadsheetId').execute()
@@ -94,6 +93,46 @@ def get_creds():
     return service
 
 
+def modify_sheet(service, id):
+    """ Currently seeing what we need to input data """
+
+    """
+    TODO Install the Python client library for Google APIs by running
+    `pip install --upgrade google-api-python-client`
+    """
+    from pprint import pprint
+
+    # The A1 notation of a range to search for a logical table of data.
+    # Values will be appended after the last row of the table.
+    range_ = 'Sheet1!A1:B2'  # TODO: Update placeholder value.
+
+    # How the input data should be interpreted.
+    value_input_option = 'USER_ENTERED'  # 'RAW' | 'USER_ENTERED' | 'INPUT_VALUE_OPTION_UNSPECIFIED'
+
+    # How the input data should be inserted.
+    insert_data_option = 'OVERWRITE'  # 'OVERWITE' | 'INSERT_ROWS'
+
+    value_range_body = {
+        "majorDimension": "ROWS",
+        "range": "Sheet1!A1:B2",
+        "values": [
+            ["topLeft", "topRight"],
+            [3, 4]
+        ]
+    }
+    print('======== Modify Sheet ================')
+    request = service.spreadsheets().values().append(
+        spreadsheetId=id,
+        range=range_,
+        valueInputOption=value_input_option,
+        insertDataOption=insert_data_option,
+        body=value_range_body
+        )
+    response = request.execute()
+    # TODO: Change code below to process the `response` dict:
+    pprint(response)
+
+
 def main():
     """Shows basic usage of the Sheets API. """
     # service = get_original_creds()
@@ -106,9 +145,10 @@ def main():
         id = SAMPLE_SPREADSHEET_ID
         sample_read(service, id)
         return id
-    spreadsheet = sheet_create(service)
+    title = str(input('What title do you want for the new worksheet?')).lower()
+    spreadsheet = sheet_create(service, title)
     id = spreadsheet.get('spreadsheetId')
-
+    modify_sheet(service, id)
     return id
 
 
