@@ -116,8 +116,8 @@ def modify_sheet(service, id):
         "majorDimension": "ROWS",
         "range": "Sheet1!A1:B2",
         "values": [
-            ["topLeft", "topRight"],
-            [3, 4]
+            ["cow", "penguin"],
+            [37, 4]
         ]
     }
     print('======== Modify Sheet ================')
@@ -140,16 +140,32 @@ def main():
     test_string = 'We got a service!' if service else 'Creds and service did not work.'
     print(test_string)
     # Sample addition
-    boring = str(input('Just load & print sample worksheet? (y/n)')).lower()
+    boring = str(input('Just load & print sample worksheet? (y/n) ')).lower()
     if boring == 'y':
         id = SAMPLE_SPREADSHEET_ID
         sample_read(service, id)
         return id
-    title = str(input('What title do you want for the new worksheet?')).lower()
-    spreadsheet = sheet_create(service, title)
-    id = spreadsheet.get('spreadsheetId')
-    with open(FILELIST, 'a') as file_end:
-        file_end.write(f"{title},{id}")
+    files, counter = [], 0
+    print('================================================')
+    print(' Choose a file by selecting the desired number ')
+    print(' Select 0 to create a new file.')
+    with open(FILELIST, 'r') as reader:
+        for line in reader:
+            counter += 1
+            key, val = line.split(',', 1)
+            files.append([key, val])
+            print(f" {counter}. {key} ")
+
+    choice = int(input('Which file do you want to modify (or 0 for create)? '))
+    if choice == 0:
+        title = str(input('What title do you want for the new worksheet? ')).lower()
+        spreadsheet = sheet_create(service, title)
+        id = spreadsheet.get('spreadsheetId')
+        with open(FILELIST, 'a') as file_end:
+            file_end.write(f"{title},{id}")
+    else:
+        choice -= 1
+        id = files[choice][1]
     modify_sheet(service, id)
     return id
 
