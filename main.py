@@ -12,7 +12,7 @@ from oauth2client import file, client, tools  # Google API Common Code Walk Thro
 # import time
 # from apiclient import discovery
 
-
+FILELIST = 'saved-worksheets.txt'
 # The ID and range of a sample spreadsheet.
 SAMPLE_SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
 SAMPLE_RANGE_NAME = 'Class Data!A2:E'
@@ -148,6 +148,8 @@ def main():
     title = str(input('What title do you want for the new worksheet?')).lower()
     spreadsheet = sheet_create(service, title)
     id = spreadsheet.get('spreadsheetId')
+    with open(FILELIST, 'a') as file_end:
+        file_end.write(f"{title},{id}")
     modify_sheet(service, id)
     return id
 
