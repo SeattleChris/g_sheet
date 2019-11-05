@@ -3,6 +3,10 @@ import os.path      # Used by both quickstart and Common code method.
 from googleapiclient.discovery import build   # Google API Common Code Walk Through AND quickstart
 from httplib2 import Http                     # Google API Common Code Walk Through
 from oauth2client import file, client, tools  # Google API Common Code Walk Through
+# from google_auth_oauthlib.flow import Flow
+
+# oauth2client import client  -> google_auth_oauthlib import flow
+# client.flow_from_clientsecrets -> flow.from_client_secrets_file
 
 # import argparse
 # import time
@@ -19,7 +23,23 @@ SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 CLIENT_SECRET = 'env/client_secret.json'
 
 
-def sample_create(service):
+def sample_read(service, id):
+    """ This was in the original quickstart sample """
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+                                range=SAMPLE_RANGE_NAME).execute()
+    values = result.get('values', [])
+    if not values:
+        print('No data found.')
+    else:
+        print('Name, Major:')
+        for row in values:
+            # Print columns A and E, which correspond to indices 0 and 4.
+            print('%s, %s' % (row[0], row[4]))
+
+
+def sheet_create(service):
     """ This is a sample snippet from the guide """
     title = 'test'
     spreadsheet = {'properties': {'title': title}}
@@ -65,39 +85,31 @@ def get_creds():
         raise EnvironmentError('Missing file')
     store = file.Storage(STORAGE)
     creds = store.get()
+    # oauth2client.client.flow_from_clientsecrets -> google_auth_oauthlib.flow.from_client_secrets_file
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets(CLIENT_SECRET, SCOPES)
+        # flow = Flow.from_client_secrets_file(CLIENT_SECRET, scopes=SCOPES)
         creds = tools.run_flow(flow, store)
     service = build('sheets', 'v4', http=creds.authorize(Http()))
     return service
 
 
 def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
+    """Shows basic usage of the Sheets API. """
     # service = get_original_creds()
     service = get_creds()
     test_string = 'We got a service!' if service else 'Creds and service did not work.'
     print(test_string)
     # Sample addition
-    spreadsheet = sample_create(service)
-    # id = SAMPLE_SPREADSHEET_ID
+    boring = str(input('Just load & print sample worksheet? (y/n)')).lower()
+    if boring == 'y':
+        id = SAMPLE_SPREADSHEET_ID
+        sample_read(service, id)
+        return id
+    spreadsheet = sheet_create(service)
     id = spreadsheet.get('spreadsheetId')
-    cells = SAMPLE_RANGE_NAME
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=id,
-                                range=cells).execute()
-    values = result.get('values', [])
 
-    if not values:
-        print('No data found.')
-    else:
-        print('Name, Major:')
-        for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+    return id
 
 
 if __name__ == '__main__':
