@@ -133,18 +133,11 @@ def modify_sheet(service, id):
     pprint(response)
 
 
-def main():
-    """Shows basic usage of the Sheets API. """
-    # service = get_original_creds()
-    service = get_creds()
-    test_string = 'We got a service!' if service else 'Creds and service did not work.'
-    print(test_string)
-    # Sample addition
+def user_menu():
+    """ Capturing the user input to do the desired actions. """
     boring = str(input('Just load & print sample worksheet? (y/n) ')).lower()
     if boring == 'y':
-        id = SAMPLE_SPREADSHEET_ID
-        sample_read(service, id)
-        return id
+        return ('boring', SAMPLE_SPREADSHEET_ID)
     files, counter = [], 0
     print('================================================')
     print(' Choose a file by selecting the desired number ')
@@ -153,21 +146,53 @@ def main():
         for line in reader:
             counter += 1
             key, val = line.split(',', 1)
+            val = val.strip()
             files.append([key, val])
             print(f" {counter}. {key} ")
-
-    choice = int(input('Which file do you want to modify (or 0 for create)? '))
+    try:
+        choice = int(input('Which file do you want to modify (or 0 for create)? '))
+    except ValueError:
+        print("Not a number, so exiting")
+        return ('exit', 0)
     if choice == 0:
         title = str(input('What title do you want for the new worksheet? ')).lower()
-        spreadsheet = sheet_create(service, title)
-        id = spreadsheet.get('spreadsheetId')
-        with open(FILELIST, 'a') as file_end:
-            file_end.write(f"{title},{id}")
+        return ('create', title)
     else:
         choice -= 1
         id = files[choice][1]
-    modify_sheet(service, id)
-    return id
+        return ('modify', id)
+
+
+def display_sheet(id):
+    """ Can we give a link to view the worksheet? """
+    url = f"https://docs.google.com/spreadsheets/d/{id}/edit#gid=0"
+    print('=================== Use the following link =====================')
+    print(url)
+    return url
+
+
+def main():
+    """Shows basic usage of the Sheets API. """
+    # service = get_original_creds()
+    service = get_creds()
+    test_string = 'We got a service!' if service else 'Creds and service did not work.'
+    print(test_string)
+    method, id = user_menu()
+    if method == 'boring':
+        sample_read(service, id)
+    elif method == 'create':
+        title = id
+        spreadsheet = sheet_create(service, title)
+        id = spreadsheet.get('spreadsheetId')
+        with open(FILELIST, 'a') as file_end:
+            file_end.write(f"{title},{id}\n")
+    elif method == 'modify':
+        modify_sheet(service, id)
+    else:
+        print('Exit condition, or Unknown condition. Exit now')
+        return
+    result = display_sheet(id)
+    return result
 
 
 if __name__ == '__main__':
